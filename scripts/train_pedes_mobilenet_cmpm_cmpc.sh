@@ -4,15 +4,16 @@ GPU_ID=$1
 export CUDA_VISIBLE_DEVICES=$1
 
 # Where the dataset is saved to.
-DATASET_DIR=/home/zhangying/Documents/Dataset/TFRecords/pedes
-RESTORE_PATH=/home/zhangying/Documents/PretrainedModels/mobilenet_v1
+DATASET_DIR=/media/fuming/dl/CMPL/Cross-Modal-Projection-Learning/builddata/Dataset/TFRecords/pedes
+RESTORE_PATH=/media/fuming/dl/CMPL/Cross-Modal-Projection-Learning/PreTrainedModels/mobilenet_v1
+
 
 # Where the checkpoint and logs will be saved to.
 DATASET_NAME=pedes
 SAVE_NAME=pedes_mobilenet_cmpm_cmpc
-CKPT_DIR=${SAVE_NAME}/checkpoint
-LOG_DIR=${SAVE_NAME}/logs
-SAMPLE_DIR=${SAVE_NAME}/train_samples
+CKPT_DIR=${SAVE_NAME}/dl/checkpoint
+LOG_DIR=${SAVE_NAME}/dl/logs
+SAMPLE_DIR=${SAVE_NAME}/dl/train_samples
 
 SPLIT_NAME=train
 
@@ -40,7 +41,7 @@ python train_image_text.py \
     --checkpoint_exclude_scopes=${EXCLUDE_SCOPES} \
     --num_epochs=50 \
     --ckpt_steps=5000 \
-    --batch_size=16 \
+    --batch_size=64 \
     --num_classes=11004 \
     --optimizer=adam \
     --learning_rate=0.0002 \

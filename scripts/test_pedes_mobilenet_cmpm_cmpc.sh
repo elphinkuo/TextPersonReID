@@ -4,14 +4,14 @@ GPU_ID=$1
 export CUDA_VISIBLE_DEVICES=$1
 
 # Where the dataset is saved to.
-DATASET_DIR=/home/zhangying/Documents/Dataset/TFRecords/pedes
-RESTORE_PATH=/home/zhangying/Documents/PretrainedModels/mobilenet_v1
+DATASET_DIR=/media/fuming/dl/CMPL/Cross-Modal-Projection-Learning/builddata/Dataset/TFRecords/pedes
+RESTORE_PATH=/media/fuming/dl/CMPL/Cross-Modal-Projection-Learning/PreTrainedModels/mobilenet_v1
 
 # Where the checkpoint and logs saved to.
 DATASET_NAME=pedes
 SAVE_NAME=pedes_mobilenet_cmpm_cmpc
-CKPT_DIR=${SAVE_NAME}/checkpoint
-RESULT_DIR=${SAVE_NAME}/results
+CKPT_DIR=${SAVE_NAME}/dl/checkpoint
+RESULT_DIR=${SAVE_NAME}/dl/results
 
 MODEL_NAME=mobilenet_v1
 MODEL_SCOPE=MobilenetV1

@@ -4,7 +4,7 @@ GPU_ID=$1
 export CUDA_VISIBLE_DEVICES=$1
 
 # Where the dataset is saved to.
-DATASET_DIR=/home/zhangying/Documents/Dataset/TFRecords/flickr30k
+DATASET_DIR=/media/fuming/Black6TB/CMPL/Cross-Modal-Projection-Learning/builddata/data/TFRecords/flickr30k
 
 # Where the checkpoint and logs saved to.
 DATASET_NAME=flickr30k

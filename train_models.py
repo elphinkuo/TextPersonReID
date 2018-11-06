@@ -12,6 +12,7 @@ from __future__ import print_function
 import tensorflow as tf
 import os
 import numpy as np
+from pdb import set_trace as breakpoint
 from datasets import dataset_factory
 from deployment import model_deploy
 from nets import nets_factory
@@ -122,6 +123,9 @@ def _tower_loss(network_fn, images, labels, input_seqs, input_masks):
 
 
 def train():
+    #checkpoint_path_test = "/media/fuming/Black6TB/CMPL/Cross-Modal-Projection-Learning/flickr30k_resnet152_cmpm/checkpoint"
+    #print(checkpoint_path_test)
+    #print(tf.train.latest_checkpoint(checkpoint_path_test))
     if not FLAGS.dataset_dir:
         raise ValueError('You must supply the dataset directory with --dataset_dir')
 
@@ -139,8 +143,8 @@ def train():
 
         # Create global_step
         with tf.device(deploy_config.variables_device()):
-            global_step = slim.create_global_step()
-
+            # global_step = slim.create_global_step()
+            global_step = tf.train.create_global_step();
         ######################
         # Select the dataset #
         ######################
@@ -198,6 +202,14 @@ def train():
             target_seq = tf.slice(text_id, [1], input_length)
             input_mask = tf.ones(input_length, dtype=tf.int32)
 
+            print("initial input_seq is ********************\n")
+            print(input_seq)
+            print("*****************************************\n")
+
+            print("initial input_mask is *******************\n")
+            print(input_mask)
+            print("*****************************************\n")
+            
             images, labels, input_seqs, target_seqs, input_masks, texts, text_ids = tf.train.batch(
                 [image, label, input_seq, target_seq, input_mask, text, text_id],
                 batch_size=FLAGS.batch_size,
@@ -307,7 +319,8 @@ def train():
 
         num_steps_per_epoch = int(dataset.num_samples / FLAGS.batch_size)
         max_number_of_steps = FLAGS.num_epochs * num_steps_per_epoch
-
+        breakpoint()
+        print("max_number_of_steps is %d", max_number_of_steps)
         for step in xrange(max_number_of_steps):
             step += int(ck_global_step)
             # check the training data
@@ -320,7 +333,9 @@ def train():
 
             _, total_loss_value, cmpm_loss_value, cmpc_loss_value, i2t_loss_value, t2i_loss_value = \
                 sess.run([train_op, loss, cmpm_loss, cmpc_loss, i2t_loss, t2i_loss])
-
+            print(cmpm_loss_value)
+            print(cmpc_loss_value)
+            print(total_loss_value)
             assert not np.isnan(cmpm_loss_value), 'Model diverged with cmpm_loss = NaN'
             assert not np.isnan(cmpc_loss_value), 'Model diverged with cmpc_loss = NaN'
             assert not np.isnan(total_loss_value), 'Model diverged with total_loss = NaN'

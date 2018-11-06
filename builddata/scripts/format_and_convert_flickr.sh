@@ -7,10 +7,16 @@ export CUDA_VISIBLE_DEVICES=$1
 #val: Finished processing 5070 captions for 1014 images of 1014 identities
 #test: Finished processing 5000 captions for 1000 images of 1000 identities
 
-IMAGE_DIR=/home/zhangying/Documents/Dataset/Flickr30K/images
-TEXT_DIR=/home/zhangying/Documents/Dataset/Flickr30K/annotations/dataset_flickr30k.json
-OUTPUT_DIR=/home/zhangying/Documents/Dataset/TFRecords/flickr30k
+# IMAGE_DIR=/home/zhangying/Documents/Dataset/Flickr30K/images
+# TEXT_DIR=/home/zhangying/Documents/Dataset/Flickr30K/annotations/dataset_flickr30k.json
+# OUTPUT_DIR=/home/zhangying/Documents/Dataset/TFRecords/flickr30k
+# DATASET_NAME=flickr30k
+
+IMAGE_DIR=/media/fuming/Black6TB/CMPL/Cross-Modal-Projection-Learning/builddata/data/flickr30k_images/flickr30k_images
+TEXT_DIR=/media/fuming/Black6TB/CMPL/Cross-Modal-Projection-Learning/builddata/data/flickr30k/dataset.json
+OUTPUT_DIR=/media/fuming/Black6TB/CMPL/Cross-Modal-Projection-Learning/builddata/data/TFRecords/flickr30k
 DATASET_NAME=flickr30k
+
 
 echo "Building the TFRecords for Flickr30K dataset..."
 

@@ -8,6 +8,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 from nets import nets_factory
+from pdb import set_trace as breakpoint
 from tensorflow.python.util import nest
 from tensorflow.python.framework import tensor_shape
 
@@ -19,9 +20,9 @@ FLAGS = tf.app.flags.FLAGS
 def pairwise_distance(A, B):
     """ Pairwise distance between A and B
     """
-    rA = tf.reduce_sum(A * A, 1, keep_dims=True)
+    rA = tf.reduce_sum(A * A, 1, keepdims=True)
 
-    rB = tf.reduce_sum(B * B, 1, keep_dims=True)
+    rB = tf.reduce_sum(B * B, 1, keepdims=True)
 
     # turn r into column vector
     D = rA - 2 * tf.matmul(A, tf.transpose(B)) + tf.transpose(rB)
@@ -105,6 +106,8 @@ def bidirectional_lstm(input, hidden_state_dimension, sequence_length, reuse=Fal
         Bi-directional LSTM
         Referred https://r2rt.com/non-zero-initial-states-for-recurrent-neural-networks.html
     """
+
+
     state_initializer = make_variable_state_initializer()
     with tf.variable_scope("bidirectional_lstm", reuse=reuse):
         lstm_cell = {}
@@ -112,7 +115,7 @@ def bidirectional_lstm(input, hidden_state_dimension, sequence_length, reuse=Fal
         for direction in ["forward", "backward"]:
             with tf.variable_scope(direction):
                 # LSTM cell
-                lstm_cell[direction] = tf.contrib.rnn.BasicLSTMCell(num_units=hidden_state_dimension,
+                lstm_cell[direction] = tf.contrib.rnn.LSTMCell(name='basic_lstm_cell',num_units=hidden_state_dimension,
                                                                     state_is_tuple=True)
                 if FLAGS.is_training:
                     lstm_cell[direction] = tf.contrib.rnn.DropoutWrapper(lstm_cell[direction],
@@ -149,6 +152,15 @@ def build_text_features(input_seqs, input_mask):
         features: extracted text features
         end_points: end points
     """
+
+    print("input_seqs is     *******      \n")
+    print(input_seqs)
+    print("*******************************\n")
+
+    print("input_mask is     ********     \n")
+    print(input_mask)
+    print("*******************************\n")
+    
     end_points = {}
     initializer = tf.contrib.layers.xavier_initializer()
     with tf.variable_scope("BiLSTM"):
@@ -165,7 +177,15 @@ def build_text_features(input_seqs, input_mask):
                                     hidden_state_dimension=FLAGS.num_lstm_units,
                                     sequence_length=sequence_length)
 
+        print("states are **********************\n")
+        print(states)
+        print("*********************************\n")
+
         features = tf.expand_dims(tf.expand_dims(states, 1), 1)  # batch_size * 1 x 1 x 1024
+
+        print("features are ********************\n")
+        print(features)
+        print("*********************************\n")
 
         return features, end_points
 
@@ -228,8 +248,8 @@ def cmpm_loss_compute(text_embeddings, image_embeddings, labels):
     label_mask = tf.cast(tf.less(labelD, 0.5), tf.float32)  # 1-match   0-unmatch
 
     # cross-modal scalar projection
-    image_embeddings_norm = tf.nn.l2_normalize(image_embeddings, dim=-1)
-    text_embeddings_norm = tf.nn.l2_normalize(text_embeddings, dim=-1)
+    image_embeddings_norm = tf.nn.l2_normalize(image_embeddings, axis=-1)
+    text_embeddings_norm = tf.nn.l2_normalize(text_embeddings, axis=-1)
 
     image_proj_text = tf.matmul(image_embeddings, tf.transpose(text_embeddings_norm))
     text_proj_image = tf.matmul(text_embeddings, tf.transpose(image_embeddings_norm))
@@ -239,12 +259,14 @@ def cmpm_loss_compute(text_embeddings, image_embeddings, labels):
     t2i_pred = tf.nn.softmax(text_proj_image)
 
     # normalize the true matching distribution
-    label_mask = tf.divide(label_mask, tf.reduce_sum(label_mask, axis=1, keep_dims=True))
+    label_mask = tf.divide(label_mask, tf.reduce_sum(label_mask, axis=1, keepdims=True))
 
     # KL Divergence
     i2t_matching_loss = tf.reduce_mean(tf.reduce_sum(i2t_pred * tf.log(1e-8 + i2t_pred / (label_mask + 1e-8)), 1))
     t2i_matching_loss = tf.reduce_mean(tf.reduce_sum(t2i_pred * tf.log(1e-8 + t2i_pred / (label_mask + 1e-8)), 1))
 
+    print("*****************i2t_matching_loss is ")
+    print(i2t_matching_loss)
     # averaged cosine distance of positive and negative pairs for observation
     cosdist = 1.0 - tf.matmul(text_embeddings_norm, tf.transpose(image_embeddings_norm))
 
@@ -272,16 +294,16 @@ def cmpc_loss_compute(text_embeddings, image_embeddings, labels):
     feature_size = image_embeddings.get_shape().as_list()[-1]
     W = tf.get_variable("Wfc", shape=[feature_size, FLAGS.num_classes],
                         initializer=tf.contrib.layers.xavier_initializer())
-    W_norm = tf.nn.l2_normalize(W, dim=0)
+    W_norm = tf.nn.l2_normalize(W, axis=0)
 
     # cross-modal vector projection
-    image_embeddings_norm = tf.nn.l2_normalize(image_embeddings, dim=-1)
-    text_embeddings_norm = tf.nn.l2_normalize(text_embeddings, dim=-1)
+    image_embeddings_norm = tf.nn.l2_normalize(image_embeddings, axis=-1)
+    text_embeddings_norm = tf.nn.l2_normalize(text_embeddings, axis=-1)
 
     image_proj_text = tf.multiply(tf.reduce_sum(tf.multiply(image_embeddings, text_embeddings_norm),
-                                                axis=1, keep_dims=True), text_embeddings_norm)
+                                                axis=1, keepdims=True), text_embeddings_norm)
     text_proj_image = tf.multiply(tf.reduce_sum(tf.multiply(text_embeddings, image_embeddings_norm),
-                                                axis=1, keep_dims=True), image_embeddings_norm)
+                                                axis=1, keepdims=True), image_embeddings_norm)
 
     # classification Loss
     image_logits = tf.matmul(image_proj_text, W_norm)

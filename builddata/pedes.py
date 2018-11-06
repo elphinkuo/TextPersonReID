@@ -42,6 +42,9 @@ def process_metadata(split_name, caption_data, image_dir):
         count += 1
         label = img['id']
         filename = os.path.join(image_dir, img['file_path'])
+        print(filename)
+        if not os.path.exists(filename):
+            continue;
         assert os.path.exists(filename)
         captions = img['processed_tokens']
         id_to_captions.setdefault(label, [])
