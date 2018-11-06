@@ -8,7 +8,7 @@ from __future__ import print_function
 
 
 import tensorflow as tf
-from dataset_utils import *
+from builddata.dataset_utils import *
 from utils import *
 
 FLAGS = tf.flags.FLAGS
