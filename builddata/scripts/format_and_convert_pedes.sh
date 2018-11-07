@@ -12,11 +12,11 @@ export CUDA_VISIBLE_DEVICES=$1
 
 
 #
-IMAGE_DIR=gs://data-fuming/imgs
-TEXT_DIR=gs://data-fuming/reid_raw.json
+IMAGE_DIR=gs://fuming-vqa/imgs
+TEXT_DIR=gs://fuming-vqa/reid_raw.json
 
 #OUTPUT_DIR=/media/fuming/Black6TB/CMPL/Cross-Modal-Projection-Learning/builddata/Dataset/TFRecords/pedes
-OUTPUT_DIR=gs://data-fuming/PEDES/TFRecords/pedes
+OUTPUT_DIR=gs://fuming-vqa/TFRecords/pedes
 
 DATASET_NAME=pedes
 
